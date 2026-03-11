@@ -96,9 +96,19 @@ app.use('/login', authLimiter);
 /**
  * Basic health check
  * GET /health
+ * GET /api/health (for Kubernetes)
  * Returns 200 if server is running
  */
 app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: NODE_ENV
+  });
+});
+
+app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     timestamp: new Date().toISOString(),

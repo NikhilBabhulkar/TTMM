@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: splitwise-db
+    environment:
+      POSTGRES_USER: ${DB_USER:-splitwise}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-splitwise123}
+      POSTGRES_DB: ${DB_NAME:-splitwise_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/seeds.sql:/docker-entrypoint-initdb.d/02-seeds.sql
+    networks:
+      - splitwise-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U splitwise"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: splitwise-backend
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-splitwise_db}
+      DB_USER: ${DB_USER:-splitwise}
+      DB_PASSWORD: ${DB_PASSWORD:-splitwise123}
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - splitwise-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: splitwise-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - splitwise-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  splitwise-network:
+    driver: bridge

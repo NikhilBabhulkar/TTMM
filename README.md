@@ -1,6 +1,8 @@
 # Expense Sharing Web Application (Splitwise Clone)
 
-A production-grade full-stack expense sharing platform built with React, Node.js, Express, and PostgreSQL. This project demonstrates modern web development practices, DevOps workflows, and cloud-ready architecture.
+[![CI/CD Pipeline](https://github.com/NikhilBabhulkar/TTMM/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/NikhilBabhulkar/TTMM/actions)
+
+A production-grade full-stack expense sharing platform built with React, Node.js, Express, and PostgreSQL. This project demonstrates modern web development practices, DevOps workflows, and cloud-ready architecture with complete CI/CD pipeline.
 
 ## 🎯 Project Overview
 
@@ -62,13 +64,13 @@ Result:
 - **PostgreSQL** - Relational database
 - **Sequelize Migrations** - Schema versioning
 
-### DevOps (Coming Soon)
-- **Docker** - Containerization
-- **Docker Compose** - Multi-container orchestration
-- **Jenkins** - CI/CD pipeline
-- **Kubernetes** - Container orchestration
-- **Prometheus** - Metrics collection
-- **Grafana** - Monitoring dashboards
+### DevOps & CI/CD
+- **Docker** - Containerization ✅
+- **Docker Compose** - Multi-container orchestration ✅
+- **GitHub Actions** - Automated CI pipeline ✅
+- **Jenkins** - CD pipeline orchestration ✅
+- **Kubernetes** - Container orchestration ✅
+- **Nginx** - Reverse proxy and load balancing ✅
 
 ## 📁 Project Structure
 
@@ -96,9 +98,24 @@ splitwise-devops-project/
 ├── database/               # SQL scripts
 │   ├── schema.sql          # Database schema
 │   └── seeds.sql           # Sample data
-├── docker/                 # Docker configurations (TBD)
-├── k8s/                    # Kubernetes manifests (TBD)
-├── jenkins/                # CI/CD pipeline (TBD)
+├── k8s/                    # Kubernetes manifests
+│   ├── namespace.yaml      # Namespace definition
+│   ├── secrets.yaml        # Secrets configuration
+│   ├── configmap.yaml      # ConfigMap
+│   ├── postgres-deployment.yaml  # Database deployment
+│   ├── backend-deployment.yaml   # Backend deployment
+│   ├── frontend-deployment.yaml  # Frontend deployment
+│   └── ingress.yaml        # Ingress rules
+├── .github/workflows/      # GitHub Actions CI/CD
+│   └── ci-cd.yml           # CI/CD pipeline
+├── scripts/                # Deployment scripts
+│   ├── deploy.sh           # Kubernetes deployment
+│   ├── cleanup.sh          # Resource cleanup
+│   └── build-and-push.sh   # Docker build & push
+├── docker-compose.yml      # Local development setup
+├── Jenkinsfile             # Jenkins pipeline
+├── CICD_SETUP.md           # Complete CI/CD guide
+├── DEPLOYMENT_GUIDE.md     # Quick deployment guide
 └── README.md               # This file
 ```
 
@@ -402,15 +419,46 @@ For each user:
 
 **Prometheus + Grafana**: Monitors application health. Alerts on issues before users notice.
 
-## 🚢 Next Steps
+## 🚢 Project Status
 
 1. ✅ Backend API implementation
 2. ✅ Frontend React application
-3. ⏳ Docker containerization
-4. ⏳ CI/CD pipeline with Jenkins
-5. ⏳ Kubernetes deployment
-6. ⏳ Monitoring with Prometheus and Grafana
-7. ⏳ Cloud deployment (AWS/GCP)
+3. ✅ Docker containerization
+4. ✅ CI/CD pipeline with GitHub Actions
+5. ✅ Jenkins pipeline configuration
+6. ✅ Kubernetes deployment manifests
+7. ⏳ Monitoring with Prometheus and Grafana
+8. ⏳ Cloud deployment (AWS EKS/GKE)
+
+## 🚀 CI/CD Pipeline
+
+This project includes a complete CI/CD pipeline:
+
+### GitHub Actions (Continuous Integration)
+- Automated testing on push/PR
+- Docker image building
+- Push to Docker Hub
+- See [.github/workflows/ci-cd.yml](.github/workflows/ci-cd.yml)
+
+### Jenkins (Continuous Deployment)
+- Automated deployment to Kubernetes
+- Rolling updates with zero downtime
+- Rollback capabilities
+- See [Jenkinsfile](Jenkinsfile)
+
+### Quick Deploy
+```bash
+# Local testing with Docker Compose
+docker-compose up --build
+
+# Deploy to Kubernetes
+./scripts/deploy.sh
+
+# Build and push images
+./scripts/build-and-push.sh YOUR_DOCKERHUB_USERNAME
+```
+
+📖 **Complete Setup Guide**: See [CICD_SETUP.md](CICD_SETUP.md) for detailed instructions on setting up the entire CI/CD pipeline.
 
 ## 📝 Development Commands
 
