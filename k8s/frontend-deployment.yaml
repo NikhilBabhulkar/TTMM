@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: YOUR_DOCKERHUB_USERNAME/splitwise-frontend:latest
+        image: nikhilbabhulkar/splitwise-frontend:latest
         ports:
         - containerPort: 80
           name: http
