@@ -1,0 +1,59 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: splitwise-cluster
+  region: us-east-1
+  version: "1.28"
+
+# Availability zones for high availability
+availabilityZones:
+  - us-east-1a
+  - us-east-1b
+
+# Node groups (EC2 instances that run your containers)
+nodeGroups:
+  - name: splitwise-nodes
+    instanceType: t3.medium  # 2 vCPU, 4GB RAM - good for learning
+    desiredCapacity: 2       # Start with 2 nodes
+    minSize: 2               # Minimum for high availability
+    maxSize: 4               # Can scale up to 4 nodes
+    volumeSize: 20           # 20GB EBS volume per node
+    volumeType: gp3          # General purpose SSD
+    ssh:
+      allow: false           # Disable SSH for security
+    iam:
+      withAddonPolicies:
+        autoScaler: true     # Enable cluster autoscaler
+        albIngress: true     # Enable ALB ingress controller
+        ebs: true            # Enable EBS CSI driver
+        efs: true            # Enable EFS CSI driver
+    labels:
+      role: worker
+      environment: production
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/splitwise-cluster: "owned"
+
+# Enable CloudWatch logging for cluster
+cloudWatch:
+  clusterLogging:
+    enableTypes: 
+      - "api"
+      - "audit"
+      - "authenticator"
+      - "controllerManager"
+      - "scheduler"
+
+# Add-ons
+addons:
+  - name: vpc-cni
+    version: latest
+  - name: coredns
+    version: latest
+  - name: kube-proxy
+    version: latest
+
+# IAM OIDC provider (required for IAM roles for service accounts)
+iam:
+  withOIDC: true
